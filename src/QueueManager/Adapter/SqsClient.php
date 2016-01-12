@@ -63,7 +63,7 @@ class SqsClient implements AdapterInterface
     }
 
     /**
-     * @return MessageReceivedInterface
+     * @return MessageReceivedInterface[]
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#receivemessage
      */
     public function receiveMessage()
@@ -75,12 +75,35 @@ class SqsClient implements AdapterInterface
         $params = array_merge($params, $this->options);
 
         $sqsResult = $this->awsSqsClient->receiveMessage($params);
+        $sqsMessages = (empty($sqsResult['Messages']))
+            ? []
+            : $sqsResult['Messages'];
 
-        return (new Message())
-            ->setId($sqsResult['MessageId'])
-            ->setBody($sqsResult['Body'])
-            ->setReceptionRequestId($sqsResult['ReceiptHandle'])
-            ->setAttributes($sqsResult['Attributes']);
+        return $this->createMessageObject($sqsMessages);
+    }
+
+    /**
+     * @param array $sqsMessages
+     * @return array
+     */
+    private function createMessageObject(array $sqsMessages)
+    {
+        $messages = [];
+
+        foreach ($sqsMessages as $sqsMessage) {
+            $message = (new Message())
+                ->setId($sqsMessage['MessageId'])
+                ->setBody($sqsMessage['Body'])
+                ->setReceptionRequestId($sqsMessage['ReceiptHandle']);
+
+            if (!empty($sqsMessage['MessageAttributes'])) {
+                $message->setAttributes($sqsMessage['MessageAttributes']);
+            }
+
+            $messages[] = $message;
+        }
+
+        return $messages;
     }
 
     /**

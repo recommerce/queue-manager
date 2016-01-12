@@ -39,6 +39,9 @@ class SqsFactoryTest extends \PHPUnit_Framework_TestCase
                                 'params' => [
                                     'region' => 'us-west-2',
                                     'version' => '2012-11-05'
+                                ],
+                                'options' => [
+
                                 ]
                             ]
                         ]

@@ -7,6 +7,10 @@ return array_merge(include 'services.config.php', [
         'params' => [
 
         ],
+        // Default options used in send and receive messages
+        'options' => [
+
+        ],
         // Queue url
         'url' => ''
     ]

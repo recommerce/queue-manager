@@ -60,10 +60,14 @@ class SqsClientTest extends \PHPUnit_Framework_TestCase
         ];
 
         $sqsResult = [
-            'MessageId' => $messageId,
-            'Body' => $body,
-            'ReceiptHandle' => $receiptHandle,
-            'Attributes' => $attributes
+            'Messages' => [
+                [
+                    'MessageId' => $messageId,
+                    'Body' => $body,
+                    'ReceiptHandle' => $receiptHandle,
+                    'MessageAttributes' => $attributes
+                ]
+            ]
         ];
 
         $expectedMessage = (new Message())
@@ -79,10 +83,11 @@ class SqsClientTest extends \PHPUnit_Framework_TestCase
             ->with($params)
             ->willReturn($sqsResult);
 
-        $message = $this->instance->receiveMessage();
+        $messages = $this->instance->receiveMessage();
 
-        $this->assertEquals($expectedMessage, $message);
-        $this->assertInstanceOf(MessageReceivedInterface::class, $message);
+        $this->assertInternalType('array', $messages);
+        $this->assertEquals($expectedMessage, $messages[0]);
+        $this->assertInstanceOf(MessageReceivedInterface::class, $messages[0]);
     }
 
     public function testDeleteMessage()
