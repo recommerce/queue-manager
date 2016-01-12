@@ -17,7 +17,7 @@ use Recommerce\QueueManager\MessageSentInterface;
 class SqsClient implements AdapterInterface
 {
     const MESSAGE_ID = 'MessageId';
-    const MESSAGE_BODY = 'MessageBody';
+    const MESSAGE_BODY = 'Body';
     const MESSAGE_ATTRIBUTES = 'MessageAttributes';
     const QUEUE_URL = 'QueueUrl';
     const RECEIPT_HANDLE = 'ReceiptHandle';
@@ -136,7 +136,7 @@ class SqsClient implements AdapterInterface
     {
         $params = [
             self::QUEUE_URL => $this->queueUrl,
-            self::MESSAGE_BODY => $messageBody,
+            'MessageBody' => $messageBody,
             self::MESSAGE_ATTRIBUTES => $attributes
         ];
 
