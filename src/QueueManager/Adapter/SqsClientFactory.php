@@ -39,7 +39,7 @@ class SqsClientFactory implements FactoryInterface
         $awsSqsParams = $config['queue_client']['params'];
 
         return new SqsClient(
-            new AwsSqsClient($awsSqsParams),
+            AwsSqsClient::factory($awsSqsParams),
             $queueUrl
         );
     }
