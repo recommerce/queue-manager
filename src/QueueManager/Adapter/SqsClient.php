@@ -16,6 +16,12 @@ use Recommerce\QueueManager\MessageSentInterface;
  */
 class SqsClient implements AdapterInterface
 {
+    const MESSAGE_ID = 'MessageId';
+    const MESSAGE_BODY = 'MessageBody';
+    const MESSAGE_ATTRIBUTES = 'MessageAttributes';
+    const QUEUE_URL = 'QueueUrl';
+    const RECEIPT_HANDLE = 'ReceiptHandle';
+
     /**
      * @var AwsSqsClient
      */
@@ -69,7 +75,7 @@ class SqsClient implements AdapterInterface
     public function receiveMessage()
     {
         $params = [
-            'QueueUrl' => $this->queueUrl,
+            self::QUEUE_URL => $this->queueUrl,
         ];
 
         $params = array_merge($params, $this->options);
@@ -92,12 +98,12 @@ class SqsClient implements AdapterInterface
 
         foreach ($sqsMessages as $sqsMessage) {
             $message = (new Message())
-                ->setId($sqsMessage['MessageId'])
-                ->setBody($sqsMessage['Body'])
-                ->setReceptionRequestId($sqsMessage['ReceiptHandle']);
+                ->setId($sqsMessage[self::MESSAGE_ID])
+                ->setBody($sqsMessage[self::MESSAGE_BODY])
+                ->setReceptionRequestId($sqsMessage[self::RECEIPT_HANDLE]);
 
-            if (!empty($sqsMessage['MessageAttributes'])) {
-                $message->setAttributes($sqsMessage['MessageAttributes']);
+            if (!empty($sqsMessage[self::MESSAGE_ATTRIBUTES])) {
+                $message->setAttributes($sqsMessage[self::MESSAGE_ATTRIBUTES]);
             }
 
             $messages[] = $message;
@@ -113,8 +119,8 @@ class SqsClient implements AdapterInterface
     public function deleteMessage($receiptHandle)
     {
         $params = [
-            'QueueUrl' => $this->queueUrl,
-            'ReceiptHandle' => $receiptHandle,
+            self::QUEUE_URL => $this->queueUrl,
+            self::RECEIPT_HANDLE => $receiptHandle,
         ];
 
         $this->awsSqsClient->deleteMessage($params);
@@ -129,13 +135,13 @@ class SqsClient implements AdapterInterface
     public function sendMessage($messageBody, array $attributes = [])
     {
         $params = [
-            'QueueUrl' => $this->queueUrl,
-            'MessageBody' => $messageBody,
-            'MessageAttributes' => $attributes
+            self::QUEUE_URL => $this->queueUrl,
+            self::MESSAGE_BODY => $messageBody,
+            self::MESSAGE_ATTRIBUTES => $attributes
         ];
 
         $sqsResult = $this->awsSqsClient->sendMessage($params);
 
-        return (new Message())->setId($sqsResult['MessageId']);
+        return (new Message())->setId($sqsResult[self::MESSAGE_ID]);
     }
 }
