@@ -7,6 +7,6 @@ install:
   - composer update --dev
 addons:
   code_climate:
-    repo_token: 533b530dfbce5d0014b00b6e21c14a5c14c34aaab5b4b218b61daa248125c630
+    repo_token: dc99f3255bf1e45e00f23609aee1cbba39bcb36f8a49c9db786f20406ad59a11
 after_script:
   - vendor/bin/test-reporter
