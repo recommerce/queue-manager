@@ -1,0 +1,10 @@
+#!/bin/sh
+ 
+echo "Execute tests."
+
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+BASE_DIR="$( dirname "$( dirname "$SCRIPT_DIR" )" )"
+
+cd $BASE_DIR
+
+vendor/bin/phing violations || exit 1

@@ -1,0 +1,13 @@
+<?php
+
+return array_merge(include 'services.config.php', [
+    'queue_client' => [
+        // Params for constructor
+        // see aws sdk documentation : http://docs.aws.amazon.com/aws-sdk-php/v3/api/class-Aws.Sqs.SqsClient.html
+        'params' => [
+
+        ],
+        // Queue url
+        'url' => ''
+    ]
+]);

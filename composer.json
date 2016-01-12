@@ -1,0 +1,21 @@
+{
+    "name":"recommerce/queue-manager",
+    "require": {
+        "aws/aws-sdk-php": "^3.0",
+        "zendframework/zend-eventmanager": "~2.5",
+        "zendframework/zend-servicemanager": "~2.5"
+    },
+    "require-dev": {
+        "humbug/humbug": "~1.0@dev",
+        "behat/behat": "^3.0",
+        "phing/phing": "^2.10",
+        "halleck45/phpmetrics": "^1.0",
+        "phpmd/phpmd": "^2.2",
+        "squizlabs/php_codesniffer": "^2.3",
+        "pdepend/pdepend": "^2.0",
+        "sebastian/phpcpd": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {"Recommerce\\": "src/"}
+    }
+}

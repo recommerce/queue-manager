@@ -1,0 +1,118 @@
+<project name="Stock business" basedir="." default="help">
+
+    <property file="${project.basedir}/resources/phing/build.properties"/>
+
+    <target name="help" description="Get help">
+        <exec passthru="true" executable="${exec.phing}">
+            <arg value="-l"/>
+        </exec>
+    </target>
+
+    <target name="install:composer" description="Install composer dependencies">
+        <composer php="${exec.php}" composer="${exec.composer}" command="install"/>
+    </target>
+
+    <target name="self-update:composer" description="Update composer.phar">
+        <composer php="${exec.php}" composer="${exec.composer}" command="self-update"/>
+    </target>
+
+    <target name="update:composer" description="Install composer dependencies">
+        <composer php="${exec.php}" composer="${exec.composer}" command="update"/>
+    </target>
+
+    <target name="composer:optimize">
+        <exec executable="${exec.php}" checkreturn="true" passthru="true">
+            <arg path="${exec.composer}"/>
+            <arg path="install"/>
+            <arg value="--no-dev"/>
+            <arg value="--prefer-dist"/>
+            <arg value="-o"/>
+        </exec>
+    </target>
+
+    <target name="lint">
+        <phplint haltonfailure="true">
+            <fileset dir="${project.basedir}/src/">
+                <include name="**/*.php"/>
+            </fileset>
+        </phplint>
+    </target>
+
+    <target name="test:phpunit" description="Run unit tests with PHPUnit">
+        <exec executable="${exec.phpunit}" checkreturn="true" passthru="true">
+            <arg value="--configuration"/>
+            <arg path="${project.basedir}/phpunit.xml"/>
+            <arg value="--coverage-html"/>
+            <arg path="${dir.build}/phpunit/coverage"/>
+            <arg value="--coverage-clover"/>
+            <arg path="${dir.build}/phpunit/clover.xml"/>
+            <arg value="--testdox-html"/>
+            <arg path="${dir.build}/phpunit/testdox.html"/>
+        </exec>
+    </target>
+
+    <target name="test:behat" description="Run functional tests">
+        <exec executable="${exec.behat}" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="test:humbug" description="Run regression testing against PHPUnit test suite">
+        <exec executable="${exec.humbug}" checkreturn="true" passthru="true">
+            <arg value="--no-progress-bar"/>
+        </exec>
+    </target>
+
+    <target name="report:phpmd" description="Mess detector">
+        <exec executable="${exec.phpmd}" checkreturn="true" passthru="true">
+            <arg path="${project.basedir}/src"/>
+            <arg path="xml"/>
+            <arg path="${dir.resources}/phpmd.xml"/>
+            <arg value="--exclude"/>
+            <arg path="*/tests/*"/>
+            <arg value="--reportfile"/>
+            <arg path="${dir.build}/pmd.xml"/>
+        </exec>
+    </target>
+
+    <target name="report:phpcs"
+            description="Find coding standard violations using PHP_CodeSniffer and log result in XML format">
+        <exec executable="${exec.phpcs}" checkreturn="true" passthru="true">
+            <arg value="--report=checkstyle"/>
+            <arg value="--standard=${dir.resources}/ruleset.xml"/>
+            <arg value="--report-file=${dir.build}/checkstyle.xml"/>
+            <arg value="--ignore=*/tests/unit/*"/>
+            <arg value="--extensions=php"/>
+            <arg path="${project.basedir}/src"/>
+        </exec>
+    </target>
+
+    <target name="report:pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="${exec.pdepend}">
+            <arg value="--jdepend-xml=${dir.build}/jdepend.xml"/>
+            <arg path="${project.basedir}/src"/>
+        </exec>
+    </target>
+
+    <target name="report:phpcpd" description="PHP Copy paste detector">
+        <exec executable="${exec.phpcpd}">
+            <arg path="${project.basedir}/src"/>
+            <arg value="--log-pmd"/>
+            <arg path="${dir.build}/cpd.xml"/>
+        </exec>
+    </target>
+
+    <target name="report:phpmetrics" description="PHPMetrics report">
+        <exec executable="${exec.phpmetrics}" checkreturn="true">
+            <arg path="${project.basedir}/src"/>
+            <arg value="--report-html=${dir.build}/phpmetrics.html"/>
+        </exec>
+    </target>
+
+    <target name="build" description="Install application" depends="self-update:composer,install:composer,lint"/>
+    <target name="unit-test" description="Run all tests" depends="test:phpunit"/>
+    <target name="violations" description="Check code violations" depends="report:phpmd,report:phpcs"/>
+    <target name="test" description="Run various tests" depends="violations,test:phpunit"/>
+    <target name="report" description="Report various metrics" depends="report:phpmetrics,report:pdepend,report:phpcpd"/>
+
+    <target name="update" description="Update project" depends="update:composer"/>
+
+</project>
