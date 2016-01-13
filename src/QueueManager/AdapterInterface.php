@@ -15,19 +15,22 @@ interface AdapterInterface
     public function getQueueId();
 
     /**
+     * @param array $options
      * @return MessageReceivedInterface[]
      */
-    public function receiveMessage();
+    public function receiveMessage(array $options = []);
 
     /**
-     * @param string $receiptHandle
+     * @param MessageReceivedInterface $message
+     * @param array $options
      */
-    public function deleteMessage($receiptHandle);
+    public function deleteMessage(MessageReceivedInterface $message, array $options = []);
 
     /**
      * @param string $messageBody
      * @param array $attributes
+     * @param array $options
      * @return MessageSentInterface
      */
-    public function sendMessage($messageBody, array $attributes = []);
+    public function sendMessage($messageBody, array $attributes = [], array $options = []);
 }

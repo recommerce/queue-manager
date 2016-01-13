@@ -93,6 +93,7 @@ class SqsClientTest extends \PHPUnit_Framework_TestCase
     public function testDeleteMessage()
     {
         $receiptHandle = '789687-KJHD';
+        $message = (new Message())->setReceptionRequestId($receiptHandle);
 
         $expectedParams = [
             'QueueUrl' => $this->queueUrl,
@@ -106,7 +107,7 @@ class SqsClientTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo($expectedParams))
             ->willReturn(null);
 
-        $this->assertNull($this->instance->deleteMessage($receiptHandle));
+        $this->assertNull($this->instance->deleteMessage($message));
     }
 
     public function testSendMessage()

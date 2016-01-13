@@ -38,6 +38,11 @@ class QueueReaderTest extends \PHPUnit_Framework_TestCase
             ->adapter
             ->expects($this->exactly(3))
             ->method('receiveMessage')
+            ->withConsecutive(
+                [$this->equalTo($params)],
+                [],
+                []
+            )
             ->will(
                 $this->onConsecutiveCalls(
                     [$this->message1],
@@ -113,7 +118,11 @@ class QueueReaderTest extends \PHPUnit_Framework_TestCase
             ->adapter
             ->expects($this->once())
             ->method('deleteMessage')
-            ->with($this->message1);
+            ->with(
+                $this->equalTo($this->message1),
+                $this->equalTo($params)
+            )
+            ->willReturn(null);
 
         $this->eventManager
             ->expects($this->any())

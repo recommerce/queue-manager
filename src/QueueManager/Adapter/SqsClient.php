@@ -35,7 +35,7 @@ class SqsClient implements AdapterInterface
     /**
      * @var array
      */
-    private $options;
+    private $params;
 
     /**
      * @param AwsSqsClient $awsSqsClient
@@ -46,7 +46,12 @@ class SqsClient implements AdapterInterface
     {
         $this->awsSqsClient = $awsSqsClient;
         $this->queueUrl = $queueUrl;
-        $this->options = $options;
+        $this->params = array_merge(
+            $options,
+            [
+                self::QUEUE_URL => $this->queueUrl
+            ]
+        );
     }
 
     /**
@@ -72,15 +77,11 @@ class SqsClient implements AdapterInterface
      * @return MessageReceivedInterface[]
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#receivemessage
      */
-    public function receiveMessage()
+    public function receiveMessage(array $options = [])
     {
-        $params = [
-            self::QUEUE_URL => $this->queueUrl,
-        ];
+        $this->params = $this->mergeParams([], $options);
 
-        $params = array_merge($params, $this->options);
-
-        $sqsResult = $this->awsSqsClient->receiveMessage($params);
+        $sqsResult = $this->awsSqsClient->receiveMessage($this->params);
         $sqsMessages = (empty($sqsResult['Messages']))
             ? []
             : $sqsResult['Messages'];
@@ -90,7 +91,7 @@ class SqsClient implements AdapterInterface
 
     /**
      * @param array $sqsMessages
-     * @return array
+     * @return MessageReceivedInterface[]
      */
     private function createMessageObject(array $sqsMessages)
     {
@@ -113,15 +114,18 @@ class SqsClient implements AdapterInterface
     }
 
     /**
-     * @param string $receiptHandle
+     * @param MessageReceivedInterface $message
+     * @param array $options
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#deletemessage
      */
-    public function deleteMessage($receiptHandle)
+    public function deleteMessage(MessageReceivedInterface $message, array $options = [])
     {
-        $params = [
-            self::QUEUE_URL => $this->queueUrl,
-            self::RECEIPT_HANDLE => $receiptHandle,
-        ];
+        $params = $this->mergeParams(
+            [
+                self::RECEIPT_HANDLE => $message->getReceptionRequestId()
+            ],
+            $options
+        );
 
         $this->awsSqsClient->deleteMessage($params);
     }
@@ -132,16 +136,28 @@ class SqsClient implements AdapterInterface
      * @return MessageSentInterface
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#sendmessage
      */
-    public function sendMessage($messageBody, array $attributes = [])
+    public function sendMessage($messageBody, array $attributes = [], array $options = [])
     {
-        $params = [
-            self::QUEUE_URL => $this->queueUrl,
-            'MessageBody' => $messageBody,
-            self::MESSAGE_ATTRIBUTES => $attributes
-        ];
+        $params = $this->mergeParams(
+            [
+                'MessageBody' => $messageBody,
+                self::MESSAGE_ATTRIBUTES => $attributes
+            ],
+            $options
+        );
 
         $sqsResult = $this->awsSqsClient->sendMessage($params);
 
         return (new Message())->setId($sqsResult[self::MESSAGE_ID]);
+    }
+
+    /**
+     * @param array $params
+     * @param array $options
+     * @return array
+     */
+    private function mergeParams(array $params, array $options = [])
+    {
+        return array_merge($options, $params, $this->params);
     }
 }

@@ -64,7 +64,7 @@ class QueueReader implements QueueReaderInterface, EventManagerAwareInterface
 
             $messages = $this
                 ->adapter
-                ->receiveMessage();
+                ->receiveMessage($params);
 
             $this
                 ->getEventManager()
@@ -99,6 +99,7 @@ class QueueReader implements QueueReaderInterface, EventManagerAwareInterface
         if (!$this->currentMessage) {
             throw new QueueReaderException("Trying to remove non existing message. You should check you have message");
         }
+
         $this
             ->getEventManager()
             ->trigger(self::DELETE_CURRENT_MESSAGE, $this, [
@@ -107,6 +108,6 @@ class QueueReader implements QueueReaderInterface, EventManagerAwareInterface
 
         $this
             ->adapter
-            ->deleteMessage($this->currentMessage);
+            ->deleteMessage($this->currentMessage, $params);
     }
 }
