@@ -2,8 +2,8 @@
     "name":"recommerce/queue-manager",
     "require": {
         "aws/aws-sdk-php": "^2.0",
-        "zendframework/zend-eventmanager": "~2.5",
-        "zendframework/zend-servicemanager": "~2.5"
+        "zendframework/zend-eventmanager": "^2.5",
+        "zendframework/zend-servicemanager": "^2.5"
     },
     "require-dev": {
         "humbug/humbug": "~1.0@dev",
