@@ -5,7 +5,7 @@ namespace Recommerce\QueueManager\Adapter;
 use Recommerce\QueueManager\AdapterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SqsFactoryTest extends \PHPUnit_Framework_TestCase
+class SqsClientFactoryTest extends \PHPUnit_Framework_TestCase
 {
     private $instance;
 
@@ -24,7 +24,7 @@ class SqsFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this
             ->serviceManager
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('get')
             ->withConsecutive(
                 ['Config']
@@ -49,14 +49,10 @@ class SqsFactoryTest extends \PHPUnit_Framework_TestCase
                 ])
             );
 
-        $this->assertInstanceOf(
-            AdapterInterface::class,
-            $this->instance->createService($this->serviceManager)
-        );
-        $this->assertInstanceOf(
-            SqsClient::class,
-            $this->instance->createService($this->serviceManager)
-        );
+        $client = $this->instance->createService($this->serviceManager);
+
+        $this->assertInstanceOf(AdapterInterface::class, $client);
+        $this->assertInstanceOf(SqsClient::class, $client);
     }
 
     /**
