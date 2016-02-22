@@ -18,7 +18,7 @@ class LoggerClientFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceManager)
     {
-        return self::createServiceFromConfig($serviceManager->get('Config'));
+        return $this->createServiceFromConfig($serviceManager->get('Config'));
     }
 
     /**
@@ -26,7 +26,7 @@ class LoggerClientFactory implements FactoryInterface
      * @return LoggerClient
      * @throws QueueReaderException
      */
-    public static function createServiceFromConfig(array $config)
+    public function createServiceFromConfig(array $config)
     {
         $hasConfiguration = isset($config['queue_client']['file_path']);
 

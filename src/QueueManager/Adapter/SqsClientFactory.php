@@ -18,7 +18,7 @@ class SqsClientFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceManager)
     {
-        return self::createServiceFromConfig($serviceManager->get('Config'));
+        return $this->createServiceFromConfig($serviceManager->get('Config'));
     }
 
     /**
@@ -26,7 +26,7 @@ class SqsClientFactory implements FactoryInterface
      * @return SqsClient
      * @throws QueueReaderException
      */
-    public static function createServiceFromConfig(array $config)
+    public function createServiceFromConfig(array $config)
     {
         $hasConfiguration = isset($config['queue_client']['url'])
             && isset($config['queue_client']['params'])
