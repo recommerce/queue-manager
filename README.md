@@ -29,6 +29,8 @@ QueueManager uses zend framework events.
 ## Usage examples
 
 ### Queue reader usage
+
+#### Amazon Web Services
 ```php
     use Zend\ServiceManager\Config;
     use Zend\ServiceManager\ServiceManager;
@@ -48,6 +50,34 @@ QueueManager uses zend framework events.
             'secret' => '<YOUR_SQS_SECRET>'
         ],
         'options' => []
+    ];
+
+    try {
+        $serviceManager = new ServiceManager(new Config($config['service_manager']));
+        $serviceManager->setService('Config', $config);
+
+        $queueManager = $serviceManager->get('recommerce.queue-manager.queue-reader');
+    } catch (\Exception $e) {
+        // Problem in queue reader creation
+    }
+
+    while ($message = $queueManager->getNextMessage()) {
+        // Do some stuff
+        // ...
+
+        $queueManager->deleteCurrentMessage();
+    }
+```
+
+#### Logger (stubs)
+```php
+    use Zend\ServiceManager\Config;
+    use Zend\ServiceManager\ServiceManager;
+
+    $config = require 'config/services.config.php';
+    $config['queue_client'] = [
+        'adapter' => 'logger-client',
+        'file_path' => '/tmp/recommerce-queue-manager-logger-client.log'
     ];
 
     try {
