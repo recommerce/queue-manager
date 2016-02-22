@@ -1,7 +1,8 @@
 <?php
 
-namespace Recommerce\QueueManager;
+namespace Recommerce\QueueManager\Factory;
 
+use Recommerce\QueueManager\QueueWriter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -15,7 +16,7 @@ class QueueWriterFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceManager)
     {
-        $adapter = $serviceManager->get('recommerce.queue-manager.adapter.sqs-client');
+        $adapter = $serviceManager->get('recommerce.queue-manager.adapter-client');
 
         return new QueueWriter($adapter);
     }

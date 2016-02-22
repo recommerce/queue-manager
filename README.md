@@ -35,6 +35,8 @@ QueueManager uses zend framework events.
 
     $config = require 'config/services.config.php';
     $config['queue_client'] = [
+        // For valid value, see adapters in config/services.config.php
+        'adapter' => 'sqs-client'
         // Params for constructor
         // see aws sdk documentation : http://docs.aws.amazon.com/aws-sdk-php/v3/api/class-Aws.Sqs.SqsClient.html
         'url' => '<YOUR_SQS_QUEUE_URL>',

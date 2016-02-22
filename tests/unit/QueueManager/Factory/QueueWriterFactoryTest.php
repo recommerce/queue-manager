@@ -1,7 +1,9 @@
 <?php
 
-namespace Recommerce\QueueManager;
+namespace Recommerce\QueueManager\Factory;
 
+use Recommerce\QueueManager\AdapterInterface;
+use Recommerce\QueueManager\QueueWriterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class QueueWriterFactoryTest extends \PHPUnit_Framework_TestCase
@@ -24,7 +26,7 @@ class QueueWriterFactoryTest extends \PHPUnit_Framework_TestCase
             ->serviceManager
             ->expects($this->once())
             ->method('get')
-            ->with('recommerce.queue-manager.adapter.sqs-client')
+            ->with('recommerce.queue-manager.adapter-client')
             ->willReturn($adapter);
 
         $this->assertInstanceOf(
