@@ -20,9 +20,11 @@ final class QueueWriterProvider
      */
     public static function get(array $config)
     {
+        $serviceConfig = include dirname(dirname(dirname(__DIR__))) . '/config/services.config.php';
+
         $services = new ServiceManager(
             new Config(
-                include dirname(dirname(dirname(__DIR__))) . '/config/services.config.php'
+                $serviceConfig['service_manager']
             )
         );
         $services->setService("Config", $config);
