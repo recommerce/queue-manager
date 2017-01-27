@@ -2,23 +2,17 @@
 
 namespace Recommerce\QueueManager\Adapter;
 
+use Interop\Container\ContainerInterface;
 use Recommerce\QueueManager\Exception\QueueReaderException;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class LoggerClientFactory implements FactoryInterface
 {
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceManager
-     * @return mixed
-     */
-    public function createService(ServiceLocatorInterface $serviceManager)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return $this->createServiceFromConfig($serviceManager->get('Config'));
+        return $this->createServiceFromConfig($container->get('Config'));
     }
 
     /**

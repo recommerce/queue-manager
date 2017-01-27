@@ -2,28 +2,29 @@
 
 namespace Recommerce\QueueManager\Factory;
 
+use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Recommerce\QueueManager\AdapterInterface;
 use Recommerce\QueueManager\QueueWriterInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class QueueWriterFactoryTest extends \PHPUnit_Framework_TestCase
+class QueueWriterFactoryTest extends TestCase
 {
     private $instance;
 
-    private $serviceManager;
+    private $container;
 
     public function setUp()
     {
-        $this->serviceManager = $this->getMock(ServiceLocatorInterface::class);
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->instance = new QueueWriterFactory();
     }
 
     public function testCreateService()
     {
-        $adapter = $this->getMock(AdapterInterface::class);
+        $adapter = $this->createMock(AdapterInterface::class);
 
         $this
-            ->serviceManager
+            ->container
             ->expects($this->once())
             ->method('get')
             ->with('recommerce.queue-manager.adapter-client')
@@ -31,7 +32,7 @@ class QueueWriterFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             QueueWriterInterface::class,
-            $this->instance->createService($this->serviceManager)
+            $this->instance->__invoke($this->container, 'a')
         );
     }
 }

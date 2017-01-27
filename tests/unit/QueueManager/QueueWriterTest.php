@@ -2,7 +2,9 @@
 
 namespace Recommerce\QueueManager;
 
-class QueueWriterTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class QueueWriterTest extends TestCase
 {
     private $instance;
 
@@ -10,7 +12,7 @@ class QueueWriterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->adapter = $this->getMock(AdapterInterface::class);
+        $this->adapter = $this->createMock(AdapterInterface::class);
         $this->instance = new QueueWriter($this->adapter);
     }
 
@@ -21,7 +23,7 @@ class QueueWriterTest extends \PHPUnit_Framework_TestCase
             'attr1' => 'lala',
             'attr2' => 'toto'
         ];
-        $messageSent = $this->getMock(MessageSentInterface::class);
+        $messageSent = $this->createMock(MessageSentInterface::class);
 
         $this
             ->adapter

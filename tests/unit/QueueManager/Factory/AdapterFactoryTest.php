@@ -2,18 +2,19 @@
 
 namespace Recommerce\QueueManager\Factory;
 
+use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Recommerce\QueueManager\AdapterInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AdapterFactoryTest extends \PHPUnit_Framework_TestCase
+class AdapterFactoryTest extends TestCase
 {
     private $instance;
 
-    private $serviceManager;
+    private $container;
 
     public function setUp()
     {
-        $this->serviceManager = $this->getMock(ServiceLocatorInterface::class);
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->instance = new AdapterFactory();
     }
 
@@ -25,10 +26,10 @@ class AdapterFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $adapterClient = $this->getMock(AdapterInterface::class);
+        $adapterClient = $this->createMock(AdapterInterface::class);
 
         $this
-            ->serviceManager
+            ->container
             ->expects($this->any())
             ->method('get')
             ->with(
@@ -46,7 +47,7 @@ class AdapterFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             $adapterClient,
-            $this->instance->createService($this->serviceManager)
+            $this->instance->__invoke($this->container, 'a')
         );
     }
 
@@ -58,12 +59,12 @@ class AdapterFactoryTest extends \PHPUnit_Framework_TestCase
         $config = [];
 
         $this
-            ->serviceManager
+            ->container
             ->expects($this->any())
             ->method('get')
             ->with('Config')
             ->willReturn($config);
 
-        $this->instance->createService($this->serviceManager);
+        $this->instance->__invoke($this->container, 'a');
     }
 }

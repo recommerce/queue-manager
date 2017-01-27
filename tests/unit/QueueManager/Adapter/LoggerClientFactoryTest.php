@@ -2,18 +2,19 @@
 
 namespace Recommerce\QueueManager\Adapter;
 
+use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Recommerce\QueueManager\AdapterInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class LoggerClientFactoryTest extends \PHPUnit_Framework_TestCase
+class LoggerClientFactoryTest extends TestCase
 {
     private $instance;
 
-    private $serviceManager;
+    private $container;
 
     public function setUp()
     {
-        $this->serviceManager = $this->getMock(ServiceLocatorInterface::class);
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->instance = new LoggerClientFactory();
     }
 
@@ -26,13 +27,13 @@ class LoggerClientFactoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this
-            ->serviceManager
+            ->container
             ->expects($this->once())
             ->method('get')
             ->with('Config')
             ->willReturn($config);
 
-        $client = $this->instance->createService($this->serviceManager);
+        $client = $this->instance->__invoke($this->container, 'a');
 
         $this->assertInstanceOf(AdapterInterface::class, $client);
         $this->assertInstanceOf(LoggerClient::class, $client);
@@ -44,13 +45,13 @@ class LoggerClientFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateServiceNoConfigException()
     {
         $this
-            ->serviceManager
+            ->container
             ->expects($this->once())
             ->method('get')
             ->with('Config')
             ->willReturn([]);
 
-        $this->instance->createService($this->serviceManager);
+        $this->instance->__invoke($this->container, 'a');
     }
 
     /**
@@ -65,12 +66,12 @@ class LoggerClientFactoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this
-            ->serviceManager
+            ->container
             ->expects($this->once())
             ->method('get')
             ->with('Config')
             ->willReturn($config);
 
-        $this->instance->createService($this->serviceManager);
+        $this->instance->__invoke($this->container, 'a');
     }
 }

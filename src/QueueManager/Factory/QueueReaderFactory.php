@@ -2,21 +2,15 @@
 
 namespace Recommerce\QueueManager\Factory;
 
+use Interop\Container\ContainerInterface;
 use Recommerce\QueueManager\QueueReader;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class QueueReaderFactory implements FactoryInterface
 {
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceManager
-     * @return mixed
-     */
-    public function createService(ServiceLocatorInterface $serviceManager)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $adapter = $serviceManager->get('recommerce.queue-manager.adapter-client');
+        $adapter = $container->get('recommerce.queue-manager.adapter-client');
 
         return new QueueReader($adapter);
     }

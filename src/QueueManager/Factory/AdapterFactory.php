@@ -2,20 +2,15 @@
 
 namespace Recommerce\QueueManager\Factory;
 
+use Interop\Container\ContainerInterface;
 use Recommerce\QueueManager\Exception\QueueReaderException;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class AdapterFactory implements FactoryInterface
 {
-    /**
-     * @param ServiceLocatorInterface $serviceManager
-     * @return array|object
-     * @throws QueueReaderException
-     */
-    public function createService(ServiceLocatorInterface $serviceManager)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $serviceManager->get('Config');
+        $config = $container->get('Config');
 
         if (empty($config['queue_client']['adapter'])) {
             throw new QueueReaderException(
@@ -25,6 +20,6 @@ class AdapterFactory implements FactoryInterface
 
         $factoryKey = 'recommerce.queue-manager.adapter.' . $config['queue_client']['adapter'];
 
-        return $serviceManager->get($factoryKey);
+        return $container->get($factoryKey);
     }
 }

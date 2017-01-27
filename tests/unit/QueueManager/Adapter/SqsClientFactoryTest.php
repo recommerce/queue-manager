@@ -2,28 +2,29 @@
 
 namespace Recommerce\QueueManager\Adapter;
 
+use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Recommerce\QueueManager\AdapterInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SqsClientFactoryTest extends \PHPUnit_Framework_TestCase
+class SqsClientFactoryTest extends TestCase
 {
     private $instance;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $serviceManager;
+    private $container;
 
     public function setUp()
     {
-        $this->serviceManager = $this->getMock(ServiceLocatorInterface::class);
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->instance = new SqsClientFactory();
     }
 
     public function testCreateService()
     {
         $this
-            ->serviceManager
+            ->container
             ->expects($this->once())
             ->method('get')
             ->withConsecutive(
@@ -49,7 +50,7 @@ class SqsClientFactoryTest extends \PHPUnit_Framework_TestCase
                 ])
             );
 
-        $client = $this->instance->createService($this->serviceManager);
+        $client = $this->instance->__invoke($this->container, 'a');
 
         $this->assertInstanceOf(AdapterInterface::class, $client);
         $this->assertInstanceOf(SqsClient::class, $client);
@@ -61,7 +62,7 @@ class SqsClientFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateServiceException()
     {
         $this
-            ->serviceManager
+            ->container
             ->expects($this->exactly(1))
             ->method('get')
             ->withConsecutive(
@@ -76,6 +77,6 @@ class SqsClientFactoryTest extends \PHPUnit_Framework_TestCase
                 ])
             );
 
-        $this->instance->createService($this->serviceManager);
+        $this->instance->__invoke($this->container, 'a');
     }
 }

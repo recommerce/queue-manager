@@ -2,11 +2,12 @@
 
 namespace Recommerce\QueueManager\Adapter;
 
+use PHPUnit\Framework\TestCase;
 use Recommerce\QueueManager\Message;
 use Recommerce\QueueManager\MessageReceivedInterface;
 use Zend\Log\LoggerInterface;
 
-class LoggerClientTest extends \PHPUnit_Framework_TestCase
+class LoggerClientTest extends TestCase
 {
     private $instance;
 
@@ -14,7 +15,7 @@ class LoggerClientTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->instance = new LoggerClient($this->logger);
     }
@@ -75,7 +76,7 @@ class LoggerClientTest extends \PHPUnit_Framework_TestCase
             json_encode($options)
         );
 
-        $messageReceived = $this->getMock(MessageReceivedInterface::class);
+        $messageReceived = $this->createMock(MessageReceivedInterface::class);
         $messageReceived
             ->expects($this->once())
             ->method('getId')

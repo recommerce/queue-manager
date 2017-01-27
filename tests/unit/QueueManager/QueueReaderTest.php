@@ -2,7 +2,9 @@
 
 namespace Recommerce\QueueManager;
 
-class QueueReaderTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class QueueReaderTest extends TestCase
 {
     private $instance;
 
@@ -16,10 +18,10 @@ class QueueReaderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->adapter = $this->getMock(AdapterInterface::class);
+        $this->adapter = $this->createMock(AdapterInterface::class);
         $this->instance = new QueueReader($this->adapter);
 
-        $this->eventManager = $this->getMock('Zend\EventManager\EventManagerInterface');
+        $this->eventManager = $this->createMock('Zend\EventManager\EventManagerInterface');
 
         $this->message1 = (new Message())
             ->setReceptionRequestId('dhsqj672')

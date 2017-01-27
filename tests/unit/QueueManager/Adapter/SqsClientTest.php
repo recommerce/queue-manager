@@ -3,11 +3,12 @@
 namespace Recommerce\QueueManager\Adapter;
 
 use Aws\Sqs\SqsClient as AwsSqsClient;
+use PHPUnit\Framework\TestCase;
 use Recommerce\QueueManager\Message;
 use Recommerce\QueueManager\MessageReceivedInterface;
 use Recommerce\QueueManager\MessageSentInterface;
 
-class SqsClientTest extends \PHPUnit_Framework_TestCase
+class SqsClientTest extends TestCase
 {
     private $instance;
 
