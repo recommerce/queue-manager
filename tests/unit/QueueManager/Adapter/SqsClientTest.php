@@ -146,4 +146,47 @@ class SqsClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedMessage, $message);
         $this->assertInstanceOf(MessageSentInterface::class, $message);
     }
+
+    public function testFifoSendMessage()
+    {
+        $fifoQueueUrl = 'http://queueurl.fifo';
+        $fifoClient = new SqsClient(
+            $this->awsSqsClient,
+            $fifoQueueUrl
+        );
+
+        $messageId = 'GRT-6372';
+        $messageBody = '{message_body}';
+
+        $attributes = [
+            'attr1' => 'lala',
+            'attr2' => 'toto'
+        ];
+
+        $expectedParams = [
+            'QueueUrl' => $fifoQueueUrl,
+            'MessageBody' => $messageBody,
+            'MessageAttributes' => $attributes,
+            'MessageGroupId' => 'main',
+        ];
+
+        $expectedMessage = (new Message())->setId($messageId);
+
+        $sqsResult = [
+            'MessageId' => $messageId,
+        ];
+
+        $this
+            ->awsSqsClient
+            ->expects($this->once())
+            ->method('sendMessage')
+            ->with($expectedParams)
+            ->willReturn($sqsResult);
+
+        $message = $fifoClient
+            ->sendMessage($messageBody, $attributes);
+
+        $this->assertEquals($expectedMessage, $message);
+        $this->assertInstanceOf(MessageSentInterface::class, $message);
+    }
 }

@@ -19,6 +19,7 @@ class SqsClient implements AdapterInterface
     const MESSAGE_ID = 'MessageId';
     const MESSAGE_BODY = 'Body';
     const MESSAGE_ATTRIBUTES = 'MessageAttributes';
+    const MESSAGE_GROUP_ID = 'MessageGroupId';
     const QUEUE_URL = 'QueueUrl';
     const RECEIPT_HANDLE = 'ReceiptHandle';
 
@@ -38,6 +39,11 @@ class SqsClient implements AdapterInterface
     private $params;
 
     /**
+     * @var boolean
+     */
+    private $isFifoQueue = false;
+
+    /**
      * @param AwsSqsClient $awsSqsClient
      * @param string $queueUrl
      * @param array $options
@@ -52,6 +58,12 @@ class SqsClient implements AdapterInterface
                 self::QUEUE_URL => $this->queueUrl
             ]
         );
+
+        $fifoSuffix = '.fifo';
+        $this->isFifoQueue = (substr($this->queueUrl, (- strlen($fifoSuffix))) === $fifoSuffix);
+        if ($this->isFifoQueue) {
+            $this->params[self::MESSAGE_GROUP_ID] = 'main';
+        }
     }
 
     /**
